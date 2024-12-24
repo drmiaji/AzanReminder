@@ -1,0 +1,17 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- تدرج متوهج لخلق تأثير اللمعان -->
+    <gradient
+        android:startColor="#035203"
+        android:endColor="#348138"
+        android:angle="45" /> <!-- زاوية التدرج -->
+
+    <!-- حواف مستديرة -->
+    <corners android:radius="8dp" />
+
+    <!-- حدود اختيارية -->
+    <stroke
+        android:width="0.4dp"
+        android:color="#FFFFFF" /> <!-- لون الإطار -->
+</shape>

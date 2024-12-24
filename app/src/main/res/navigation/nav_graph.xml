@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment2">
+
+    <fragment
+
+        android:id="@+id/homeFragment"
+        android:name="com.islamic.prayertimesapp.presentation.home.HomeFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_qiblaFragment"
+            app:destination="@id/qiblaFragment"
+            app:enterAnim="@anim/slide_in"
+            app:popEnterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out"
+
+
+            />
+    </fragment>
+    <fragment
+        tools:layout="@layout/fragment_splash"
+        android:id="@+id/splashFragment2"
+        android:name="com.islamic.prayertimesapp.presentation.splash.SplashFragment"
+        android:label="SplashFragment" >
+        <action
+            android:id="@+id/action_splashFragment2_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/slide_in"
+            app:popUpTo="@+id/nav_graph"
+
+            app:popExitAnim="@anim/slide_out"
+            app:popUpToInclusive="true"
+            app:popEnterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out"
+            />
+    </fragment>
+    <fragment
+        tools:layout="@layout/fragment_qibla"
+        android:id="@+id/qiblaFragment"
+        android:name="com.islamic.prayertimesapp.presentation.Direction.QiblaFragment"
+        android:label="QiblaFragment" >
+        <action
+            android:id="@+id/action_qiblaFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+</navigation>

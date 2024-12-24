@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">تطبيق أوقات الصلاة</string>
+    <string name="hello_blank_fragment">مرحباً بالجزء الفارغ</string>
+    <string name="todo">قائمة المهام</string>
+    <string name="dec_25_2024">25 ديسمبر 2024</string>
+    <string name="mansoura_egypt_mahmudy_st">المنصورة، مصر، شارع المحمودي</string>
+    <string name="next_nprayer">الصلاة التالية \n</string>
+    <string name="isha">العشاء</string>
+    <string name="time_left_n_1_hr_16_min">....</string>
+    <string name="fajr">الفجر</string>
+    <string name="_4_50_am">4:50 صباحاً</string>
+    <string name="sunrise">الشروق</string>
+    <string name="_6_05_am">6:05 صباحاً</string>
+    <string name="duhr">الظهر</string>
+    <string name="_1_44_pm">1:44 مساءً</string>
+    <string name="asr">العصر</string>
+    <string name="_5_52_pm">5:52 مساءً</string>
+    <string name="maghrib">المغرب</string>
+    <string name="_9_23_pm">9:23 مساءً</string>
+    <string name="iisha">العشاء</string>
+    <string name="S10_55_pm">10:55 مساءً</string>
+    <string name="show_qibla_diraction_on_map">عرض اتجاه القبلة على الخريطة</string>
+    <string name="appwidget_text">مثال</string>
+    <string name="add_widget">إضافة أداة</string>
+    <string name="app_widget_description">هذه هي وصف الأداة</string>
+    <string name="Egypt">الغربية، طنطا، مصر</string>
+</resources>
