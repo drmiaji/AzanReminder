@@ -28,7 +28,7 @@
 
 ## App Architecture
 <div align="center">
-  <img src="https://github.com/ahmed-faroukk/AlalmiyaAlhura-Task/assets/72602749/8eb9bff8-f516-44bd-bc5c-d5eccf78225f" alt="App Architecture" width="600" />
+  <img src="https://github.com/ahmed-faroukk/AlalmiyaAlhura-Task/assets/72602749/8eb9bff8-f516-44bd-bc5c-d5eccf78225f" alt="App Architecture" width="200" />
 </div>
 
 ---
