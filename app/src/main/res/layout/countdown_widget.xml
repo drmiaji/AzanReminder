@@ -1,64 +1,46 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    style="@style/Widget.PrayerTimesApp.AppWidget.Container"
-    android:background="@drawable/shapeforlinear_24"
-    android:theme="@style/Theme.PrayerTimesApp.AppWidgetContainer"
     android:layout_height="wrap_content"
-   >
+    android:orientation="vertical"
+    style="@style/Widget.PrayerTimesApp.AppWidget.Container"
+    android:theme="@style/Theme.PrayerTimesApp.AppWidgetContainer"
+    android:background="@drawable/shapeforlinear_24"
+    android:padding="10dp"
+    android:gravity="center">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+        <TextView
+            android:id="@+id/appwidget_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next Prayer Is"
+            android:textSize="23sp"
+            android:textStyle="bold|italic"
+            android:contentDescription="@string/appwidget_text" />
 
-        >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp"
-
-            >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal"
-                >
-                <TextView
-                    android:id="@+id/appwidget_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/appwidget_text"
-                    android:text=" Next Prayer Is  "
-                    android:textSize="23sp"
-                    android:textStyle="bold|italic" />
-                <TextView
-                    android:id="@+id/prayerName"
-                    android:layout_width="60dp"
-                    android:backgroundTint="#1C8722"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/appwidget_text"
-                    android:text="FAJR"
-                    android:textColor="#4CAF50"
-                    android:textSize="20dp"
-                    android:textStyle="bold|italic" />
-            </LinearLayout>
-            <Chronometer
-                android:gravity="center_horizontal"
-                android:id="@+id/countDown"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:contentDescription="@string/appwidget_text"
-                android:text="1:25:23"
-                android:textColor="#69DF6E"
-                android:textSize="29sp"
-                android:textStyle="bold|italic" />
-        </LinearLayout>
-
-
+        <TextView
+            android:id="@+id/prayerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FAJR"
+            android:textSize="20sp"
+            android:textColor="#4CAF50"
+            android:textStyle="bold|italic"
+            android:contentDescription="@string/appwidget_text" />
     </LinearLayout>
 
-</RelativeLayout>
+    <Chronometer
+        android:id="@+id/countDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="1:25:23"
+        android:textColor="#69DF6E"
+        android:textSize="29sp"
+        android:textStyle="bold|italic"
+        android:contentDescription="@string/appwidget_text" />
+</LinearLayout>

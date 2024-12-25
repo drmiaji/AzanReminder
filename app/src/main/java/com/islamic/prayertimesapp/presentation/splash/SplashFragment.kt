@@ -8,12 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.islamic.prayertimesapp.R
 import com.islamic.prayertimesapp.databinding.FragmentSplashBinding
 import com.islamic.prayertimesapp.presentation.splash.notifications.PrayerNotificationWorker
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SplashFragment : Fragment(R.layout.fragment_splash) {
 
@@ -33,6 +36,19 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         // إرسال إشعار الصلاة على النبي عند فتح التطبيق
         sendPrayerNotification()
 
+        // إعداد واجهة المستخدم
+        setupUI()
+
+        // بدء تأخير الانتقال باستخدام Coroutine
+        lifecycleScope.launch {
+            delay(8500) // تأخير لمدة 8.5 ثانية
+            if (isAdded) { // تحقق من أن الـ Fragment ما زال موجودًا
+                findNavController().navigate(R.id.action_splashFragment2_to_homeFragment)
+            }
+        }
+    }
+
+    private fun setupUI() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             // إخفاء شريط التنقل وشريط الحالة
             activity?.window?.decorView?.systemUiVisibility = (
@@ -47,11 +63,6 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
 
         // تشغيل الأنيميشن
         binding.lottieAnimation.playAnimation()
-
-        // تأخير الانتقال
-        Handler(Looper.getMainLooper()).postDelayed({
-            findNavController().navigate(R.id.action_splashFragment2_to_homeFragment)
-        }, 8500)
     }
 
     // دالة لإرسال إشعار الصلاة على النبي باستخدام WorkManager

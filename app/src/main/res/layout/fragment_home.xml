@@ -334,8 +334,10 @@
 
     <ImageView
         android:id="@+id/QiblaBtn"
+        android:layout_marginTop="@dimen/_23sdp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_bias="0.459"
         android:src="@drawable/location_circle_small"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginStart="@dimen/_13ssp"

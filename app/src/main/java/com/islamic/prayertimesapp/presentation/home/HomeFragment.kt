@@ -129,6 +129,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     }
                     is Resource.Loading -> {
                         // هنا يمكنك معالجة حالة التحميل إذا كان ذلك مطلوبًا
+
                     }
                 }
             }
@@ -193,6 +194,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+
     internal fun saveCountdownEndTime(context: Context, endTimeMillis: Long) {
         val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         preferences.edit().putLong(COUNTDOWN_TIME_KEY, endTimeMillis).apply()
@@ -212,6 +214,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+
     private fun formatTime(seconds: Long): String {
         val hours = seconds / 3600
         val minutes = (seconds % 3600) / 60
@@ -219,22 +222,42 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         return String.format("%02d hr %02d min %02d sec", hours, minutes, secondsRemaining)
     }
 
+//    private fun convertTimeToMilliseconds(timeString: String): Long {
+//        return try {
+//            val format = SimpleDateFormat("hh:mm a", Locale.US)
+//            val calendar = Calendar.getInstance()
+//            val date = format.parse(timeString)
+//            if (date != null) {
+//                calendar.time = date
+//                // اجعل التاريخ الحالي يتضمن وقت الصلاة
+//                val prayerTimeCalendar = Calendar.getInstance()
+//                prayerTimeCalendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY))
+//                prayerTimeCalendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE))
+//                prayerTimeCalendar.set(Calendar.SECOND, 0)
+//                prayerTimeCalendar.timeInMillis
+//            } else {
+//                -1
+//            }
+//        } catch (e: Exception) {
+//            -1
+//        }
+//    }
+
     private fun convertTimeToMilliseconds(timeString: String): Long {
         return try {
-            val format = SimpleDateFormat("hh:mm a", Locale.US)
-            val calendar = Calendar.getInstance()
-            val date = format.parse(timeString)
-            if (date != null) {
-                calendar.time = date
-                // اجعل التاريخ الحالي يتضمن وقت الصلاة
-                val prayerTimeCalendar = Calendar.getInstance()
-                prayerTimeCalendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY))
-                prayerTimeCalendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE))
-                prayerTimeCalendar.set(Calendar.SECOND, 0)
-                prayerTimeCalendar.timeInMillis
-            } else {
-                -1
+            // التنسيق باستخدام 12 ساعة مع AM/PM
+            val format12Hour = SimpleDateFormat("hh:mm a", Locale.US)
+            val date12Hour = format12Hour.parse(timeString)
+
+            if (date12Hour != null) {
+                return date12Hour.time
             }
+
+            // إذا لم يكن التوقيت بنظام 12 ساعة، حاول استخدام 24 ساعة
+            val format24Hour = SimpleDateFormat("HH:mm", Locale.US)
+            val date24Hour = format24Hour.parse(timeString)
+
+            date24Hour?.time ?: -1
         } catch (e: Exception) {
             -1
         }
@@ -242,24 +265,51 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
 
     private fun nextPrayer(times: List<String>): Long {
-        val currentTime = Calendar.getInstance().timeInMillis
+        val currentTime = Calendar.getInstance().time
+        val dateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()) // تنسيق الوقت باستخدام AM/PM
+        val formattedTime = dateFormat.format(currentTime)
 
+        val newTime = convertTimeToMilliseconds(formattedTime) // الوقت الحالي بالميلي ثانية
 
-        for (i in times.indices) {
-            val prayerTimeInMillis = convertTimeToMilliseconds(times[i])
-            if (prayerTimeInMillis > currentTime) {
-                index = i + 1
-                viewModel.setIndex(index)
-                return prayerTimeInMillis - currentTime
+        var prayerTimeMillis: Long = 0
+        var index = -1 // الفهرس الذي سيتم تحديده بناءً على الصلاة القادمة
+
+        // المرور عبر كل أوقات الصلاة
+        for ((i, prayerTime) in times.withIndex()) {
+            val prayerTimeMillis = convertTimeToMilliseconds(prayerTime) // تحويل وقت الصلاة للميلي ثانية
+
+            // إذا كان وقت الصلاة بعد الوقت الحالي
+            if (newTime < prayerTimeMillis) {
+                index = i // تحديد الفهرس للصلاة القادمة
+                val timeRemaining = prayerTimeMillis - newTime // حساب الوقت المتبقي للصلاة القادمة
+                viewModel.setIndex(index) // تعيين الفهرس للصلاة القادمة
+                return timeRemaining // إرجاع الوقت المتبقي
             }
         }
 
-        // حساب الوقت المتبقي لصلاة الفجر لليوم التالي
-        val firstPrayerInMillis = convertTimeToMilliseconds(times[0]) + 24 * 60 * 60 * 1000
-        index = 1
-        viewModel.setIndex(index)
-        return firstPrayerInMillis - currentTime
+        // إذا كانت جميع الصلوات قد مرت اليوم، يمكن إضافة منطق لإعادة الحساب لبداية اليوم التالي
+        return 0 // إذا لم يكن هناك أي صلاة قادمة
     }
+
+//    private fun nextPrayer(times: List<String>): Long {
+//        val currentTime = Calendar.getInstance().timeInMillis
+//
+//
+//        for (i in times.indices) {
+//            val prayerTimeInMillis = convertTimeToMilliseconds(times[i])
+//            if (prayerTimeInMillis > currentTime) {
+//                index = i + 1
+//                viewModel.setIndex(index)
+//                return prayerTimeInMillis - currentTime
+//            }
+//        }
+//
+//        // حساب الوقت المتبقي لصلاة الفجر لليوم التالي
+//        val firstPrayerInMillis = convertTimeToMilliseconds(times[0]) + 24 * 60 * 60 * 1000
+//        index = 1
+//        viewModel.setIndex(index)
+//        return firstPrayerInMillis - currentTime
+//    }
 
     fun updateNextPrayer(times: List<String>) {
         val timeLeft = nextPrayer(times)
@@ -298,6 +348,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
         })
     }
+
 
     @SuppressLint("SetTextI18n")
     private fun incrementLogic() {
