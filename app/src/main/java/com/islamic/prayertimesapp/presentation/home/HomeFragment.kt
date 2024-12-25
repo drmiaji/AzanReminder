@@ -165,20 +165,37 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
 
             // ملاحظة التغييرات في فهرس الصلاة
+            // to handle count down
             viewModel.index.observe(viewLifecycleOwner) { index ->
-                binding.tvNextpray.text = when (index) {
-                    1 -> "Fajr"
-                    2 -> "Sunrise"
-                    3 -> "Duhr"
-                    4 -> "Asr"
-                    5 -> "Maghrib"
-                    6 -> "Isha"
-                    else -> ""
+
+                when (index) {
+                    1 -> {
+                        binding.tvNextpray.text = "Fajr"
+                    }
+
+                    2 -> {
+                        binding.tvNextpray.text = "Sunrise"
+                    }
+
+                    3 -> {
+                        binding.tvNextpray.text = "Duhr"
+                    }
+
+                    4 -> {
+                        binding.tvNextpray.text = "Asr"
+                    }
+
+                    5 -> {
+                        binding.tvNextpray.text = "Maghrib"
+                    }
+
+                    6 -> {
+                        binding.tvNextpray.text = "Isha"
+                    }
                 }
             }
         }
     }
-
 
 
     @SuppressLint("SetTextI18n")
@@ -206,10 +223,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     fun startCountdown(totalSeconds: Long) {
         job = CoroutineScope(Dispatchers.Main).launch {
             for (seconds in totalSeconds downTo 0) {
+                // تحديث واجهة المستخدم بشكل فوري
                 val formattedTime = formatTime(seconds)
                 binding.tvCountdown.text = "          Time Left \n $formattedTime"
-                delay(1000)
             }
+            // عند انتهاء العد التنازلي
             binding.tvCountdown.text = "Countdown finished for today will start at 12 am"
         }
     }

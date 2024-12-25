@@ -4,12 +4,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import android.os.Build
 import com.islamic.prayertimesapp.R
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
@@ -97,10 +97,10 @@ class PrayerNotificationWorker(context: Context, workerParams: WorkerParameters)
     companion object {
         // دالة لجدولة إشعار لمرة واحدة فقط
         fun schedulePrayerNotification(context: Context) {
-            val workRequest = OneTimeWorkRequestBuilder<PrayerNotificationWorker>()
+            val workRequest = PeriodicWorkRequestBuilder<PrayerNotificationWorker>(15, TimeUnit.MINUTES)
                 .build()
 
-            // جدولة العمل لمرة واحدة فقط
+            // جدولة العمل كل 15 دقيقة
             WorkManager.getInstance(context).enqueue(workRequest)
         }
     }

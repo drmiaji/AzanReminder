@@ -21,6 +21,10 @@ class MainActivity : AppCompatActivity() {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.activity_main)
 
+            // إعادة جدولة العمل لإرسال إشعار عند فتح التطبيق
+            PrayerNotificationWorker.schedulePrayerNotification(applicationContext)
+
+
             // جدولة مهمة الصلاة عند فتح التطبيق
 //            schedulePrayerNotification(this)
 //            PrayerNotificationWorker.schedulePrayerNotification(applicationContext)
@@ -28,11 +32,6 @@ class MainActivity : AppCompatActivity() {
             checkNetwork()
         }
 
-    override fun onResume() {
-        super.onResume()
-        // إعادة جدولة العمل لإرسال إشعار عند فتح التطبيق
-        PrayerNotificationWorker.schedulePrayerNotification(applicationContext)
-    }
 
 
         fun checkNetwork() {

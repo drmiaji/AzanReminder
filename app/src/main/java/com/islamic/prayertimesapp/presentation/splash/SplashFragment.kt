@@ -17,7 +17,6 @@ import com.islamic.prayertimesapp.databinding.FragmentSplashBinding
 import com.islamic.prayertimesapp.presentation.splash.notifications.PrayerNotificationWorker
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 class SplashFragment : Fragment(R.layout.fragment_splash) {
 
     private var _binding: FragmentSplashBinding? = null
@@ -30,10 +29,10 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onResume() {
+        super.onResume()
 
-        // إرسال إشعار الصلاة على النبي عند فتح التطبيق
+        // إرسال إشعار الصلاة على النبي عند العودة للواجهة
         sendPrayerNotification()
 
         // إعداد واجهة المستخدم
@@ -75,7 +74,6 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         // تنفيذ العمل عبر WorkManager
         WorkManager.getInstance(requireContext()).enqueue(workRequest)
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
