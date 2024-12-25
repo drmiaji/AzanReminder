@@ -76,6 +76,7 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         WorkManager.getInstance(requireContext()).enqueue(workRequest)
     }
 
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null // تجنب تسرب الذاكرة

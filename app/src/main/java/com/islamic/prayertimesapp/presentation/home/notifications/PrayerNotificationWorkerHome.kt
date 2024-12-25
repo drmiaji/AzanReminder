@@ -62,31 +62,47 @@ class PrayerNotificationWorkerHome(context: Context, workerParams: WorkerParamet
         }
         val prayerTimes = getPrayerTimes()
 
+        // البحث عن الصلاة القادمة بناءً على الوقت الحالي
         for ((prayer, time) in prayerTimes) {
             if (currentTime.before(time)) {
-                return "حان وقت صلاة $prayer"
+                val timeRemaining = getTimeRemaining(currentTime, time)
+                return "حان وقت صلاة $prayer\nتبقى: $timeRemaining"
             }
         }
 
         return "لا توجد صلاة قادمة حالياً"
     }
 
+    private fun getTimeRemaining(currentTime: Calendar, prayerTime: Calendar): String {
+        val timeDiffMillis = prayerTime.timeInMillis - currentTime.timeInMillis
+        val hoursRemaining = (timeDiffMillis / (1000 * 60 * 60)).toInt()
+        val minutesRemaining = ((timeDiffMillis / (1000 * 60)) % 60).toInt()
+
+        // صياغة الوقت المتبقي
+        return "%02d:%02d".format(hoursRemaining, minutesRemaining)
+    }
+
     private fun getPrayerTimes(): Map<String, Calendar> {
         val prayerTimes = mutableMapOf<String, Calendar>()
         val calendar = Calendar.getInstance()
 
+        // الفجر
         prayerTimes["الفجر"] = calendar.clone() as Calendar
         prayerTimes["الفجر"]!!.apply { set(Calendar.HOUR_OF_DAY, 5); set(Calendar.MINUTE, 0) }
 
+        // الظهر
         prayerTimes["الظهر"] = calendar.clone() as Calendar
         prayerTimes["الظهر"]!!.apply { set(Calendar.HOUR_OF_DAY, 12); set(Calendar.MINUTE, 0) }
 
+        // العصر
         prayerTimes["العصر"] = calendar.clone() as Calendar
         prayerTimes["العصر"]!!.apply { set(Calendar.HOUR_OF_DAY, 15); set(Calendar.MINUTE, 30) }
 
+        // المغرب
         prayerTimes["المغرب"] = calendar.clone() as Calendar
         prayerTimes["المغرب"]!!.apply { set(Calendar.HOUR_OF_DAY, 18); set(Calendar.MINUTE, 0) }
 
+        // العشاء
         prayerTimes["العشاء"] = calendar.clone() as Calendar
         prayerTimes["العشاء"]!!.apply { set(Calendar.HOUR_OF_DAY, 19); set(Calendar.MINUTE, 30) }
 
@@ -95,6 +111,7 @@ class PrayerNotificationWorkerHome(context: Context, workerParams: WorkerParamet
 
     companion object {
         fun schedulePrayerNotification(context: Context) {
+            // تحديد التكرار الدوري هنا إذا كنت بحاجة لإرسال الإشعار بشكل دوري (مثل كل ساعة أو ساعتين)
             val workRequest = PeriodicWorkRequestBuilder<PrayerNotificationWorkerHome>(1, TimeUnit.HOURS).build()
             WorkManager.getInstance(context).enqueue(workRequest)
         }

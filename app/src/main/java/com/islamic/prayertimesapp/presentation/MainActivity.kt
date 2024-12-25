@@ -23,10 +23,17 @@ class MainActivity : AppCompatActivity() {
 
             // جدولة مهمة الصلاة عند فتح التطبيق
 //            schedulePrayerNotification(this)
-            PrayerNotificationWorker.schedulePrayerNotification(applicationContext)
+//            PrayerNotificationWorker.schedulePrayerNotification(applicationContext)
             window.statusBarColor = ContextCompat.getColor(this, R.color.black)
             checkNetwork()
         }
+
+    override fun onResume() {
+        super.onResume()
+        // إعادة جدولة العمل لإرسال إشعار عند فتح التطبيق
+        PrayerNotificationWorker.schedulePrayerNotification(applicationContext)
+    }
+
 
         fun checkNetwork() {
 
