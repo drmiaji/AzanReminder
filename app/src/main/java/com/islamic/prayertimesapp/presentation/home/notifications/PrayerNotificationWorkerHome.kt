@@ -13,6 +13,8 @@ import androidx.work.WorkManager
 import com.islamic.prayertimesapp.R
 import java.util.concurrent.TimeUnit
 import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.util.TimeZone
 
 class PrayerNotificationWorkerHome(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
@@ -44,7 +46,7 @@ class PrayerNotificationWorkerHome(context: Context, workerParams: WorkerParamet
         // تخصيص نص الإشعار للصلاة القادمة
         val nextPrayerText = getNextPrayer()
         val notification = NotificationCompat.Builder(applicationContext, channelId)
-            .setContentTitle("حان وقت الصلاة")
+            .setContentTitle("التالي")
             .setContentText(nextPrayerText)
             .setSmallIcon(R.drawable.logoazan)
             .setAutoCancel(true)
@@ -66,16 +68,28 @@ class PrayerNotificationWorkerHome(context: Context, workerParams: WorkerParamet
         for ((prayer, time) in prayerTimes) {
             if (currentTime.before(time)) {
                 val timeRemaining = getTimeRemaining(currentTime, time)
-                return "حان وقت صلاة $prayer\nتبقى: $timeRemaining"
+                val prayerTime = formatPrayerTime(time)
+                return "وقت صلاة $prayer: $prayerTime\nتبقى: $timeRemaining"
             }
         }
 
         return "لا توجد صلاة قادمة حالياً"
     }
 
+    private fun formatPrayerTime(prayerTime: Calendar): String {
+        // تعديل التوقيت إلى توقيت مصر (UTC + 2)
+        val egyptTimeZone = TimeZone.getTimeZone("Africa/Cairo")
+        prayerTime.timeZone = egyptTimeZone
+
+        // استخدام تنسيق 12 ساعة مع AM/PM
+        val timeFormat = SimpleDateFormat("hh:mm a", java.util.Locale("ar", "EG"))
+        timeFormat.timeZone = egyptTimeZone
+        return timeFormat.format(prayerTime.time)
+    }
+
     private fun getTimeRemaining(currentTime: Calendar, prayerTime: Calendar): String {
         val timeDiffMillis = prayerTime.timeInMillis - currentTime.timeInMillis
-        val hoursRemaining = (timeDiffMillis / (1000 * 60 * 60)).toInt()
+        val hoursRemaining = (timeDiffMillis / (1000 * 60 * 60)-1).toInt()
         val minutesRemaining = ((timeDiffMillis / (1000 * 60)) % 60).toInt()
 
         // صياغة الوقت المتبقي
