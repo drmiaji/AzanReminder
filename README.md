@@ -26,13 +26,6 @@
 
 ---
 
-## App Architecture
-<div align="center">
-  <img src="https://github.com/ahmed-faroukk/AlalmiyaAlhura-Task/assets/72602749/8eb9bff8-f516-44bd-bc5c-d5eccf78225f" alt="App Architecture" width="200" />
-</div>
-
----
-
 ## In-App Architecture
 <div align="center">
   <img src="https://github.com/ahmed-faroukk/AlalmiyaAlhura-Task/assets/72602749/a4a02bb5-58ca-4ac6-a9c6-153182644af5" alt="In-App Architecture" width="600" />
@@ -41,13 +34,13 @@
 ---
 
 ## Tools & APIs
-- 🛠️ **Architecture**: MVVM, Clean Architecture
+- 🛠️ **Architecture**: MVVM, Clean Architecture ,Unit Testing
 - 🔧 **Dependency Injection**: Dagger Hilt
 - 🌐 **APIs**: Fused Location Provider API, Retrofit, OkHttp
 - 🗃️ **Database**: Room DB
 - 🗺️ **Mapping**: Open Street Maps
-- 📅 **Work Scheduling**: WorkManager
-- 💡 **UI Enhancements**: View Binding, Splash Screen, Navigation Component
+- 📅 **Work Scheduling**: WorkManager ,Broadcast Services 
+- 💡 **UI Enhancements**: View Binding, Splash Screen, Navigation Component 
 - 🚀 **Kotlin Features**: Coroutines, Sealed Classes
 - 📡 **Network Monitoring**: Observing network connection with Flow
 - 🛡️ **Leak Detection**: LeakCanary
