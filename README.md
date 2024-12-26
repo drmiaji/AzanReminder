@@ -18,7 +18,7 @@
 <div align="center">
   <img src="https://github.com/user-attachments/assets/5faeeeab-9ffb-4d82-b7d2-3bcb7eb320e8" alt="Notification" width="200" />
   <img src="https://github.com/user-attachments/assets/9d7d5820-33f9-4978-afeb-d1e675dabe42" alt="Notification Splash" width="200" />
-  <img src="https://github.com/user-attachments/assets/c2f5bece-7ca4-450d-9e10-42542402ae50" alt="Splash Screen" width="200" />
+  <img src="https://github.com/user-attachments/assets/4eed4e39-4954-496c-bb7b-940a7c851cec" alt="Splash Screen" width="200" />
   <img src="https://github.com/user-attachments/assets/429456f4-4e12-4cf6-8220-1eac919b57fe" alt="Azan Times" width="200" />
   <img src="https://github.com/user-attachments/assets/bee1a898-e0eb-4623-9ac9-96475370ba12" alt="Azan Logo" width="200" />
   <img src="https://github.com/user-attachments/assets/1427dca7-31c1-40a9-9859-63b44bdbedcc" alt="Map Screen" width="200" />
