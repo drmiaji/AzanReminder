@@ -6,6 +6,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.PeriodicWorkRequestBuilder
@@ -75,10 +76,10 @@ class PrayerNotificationWorker(context: Context, workerParams: WorkerParameters)
         }
 
         // اختيار حديث عشوائي
-        val randomHadith = ahadith.random()
+        val randomHadith = ahadith[Random.nextInt(ahadith.size)]
 
         // تعيين الصوت المخصص للإشعار
-        val soundUri: Uri = Uri.parse("android.resource://${applicationContext.packageName}/raw/file") // تأكد من صحة اسم الملف ووجوده
+        val soundUri: Uri = Uri.parse("android.resource://${applicationContext.packageName}/raw/azan") // تأكد من صحة اسم الملف ووجوده
 
         // بناء الإشعار
         val notification = NotificationCompat.Builder(applicationContext, channelId)
@@ -95,13 +96,18 @@ class PrayerNotificationWorker(context: Context, workerParams: WorkerParameters)
     }
 
     companion object {
-        // دالة لجدولة إشعار لمرة واحدة فقط
+        // دالة لجدولة إشعار الصلاة على النبي بشكل دوري كل 15 دقيقة
         fun schedulePrayerNotification(context: Context) {
-            val workRequest = PeriodicWorkRequestBuilder<PrayerNotificationWorker>(15, TimeUnit.MINUTES)
-                .build()
+            val workRequest = PeriodicWorkRequestBuilder<PrayerNotificationWorker>(
+                15, TimeUnit.MINUTES // يتم تشغيل العمل كل 15 دقيقة
+            ).build()
 
-            // جدولة العمل كل 15 دقيقة
-            WorkManager.getInstance(context).enqueue(workRequest)
+            // جدولة العمل الدوري
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                "PrayerNotificationWorker", // اسم العمل لتجنب تكرار الجدولة
+                ExistingPeriodicWorkPolicy.REPLACE, // استبدال العمل إذا كان موجوداً مسبقاً
+                workRequest
+            )
         }
     }
 }
