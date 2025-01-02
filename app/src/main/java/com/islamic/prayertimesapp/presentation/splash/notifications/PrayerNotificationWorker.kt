@@ -3,6 +3,7 @@ package com.islamic.prayertimesapp.presentation.splash.notifications
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
@@ -13,7 +14,6 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.islamic.prayertimesapp.R
 import java.util.concurrent.TimeUnit
-import kotlin.random.Random
 
 class PrayerNotificationWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
@@ -53,15 +53,15 @@ class PrayerNotificationWorker(context: Context, workerParams: WorkerParameters)
 
     override fun doWork(): Result {
         // إرسال إشعار الصلاة على النبي مع حديث عشوائي
-        showPrayerNotification()
+        sendPrayerNotification()
         return Result.success()
     }
 
-    private fun showPrayerNotification() {
+    private fun sendPrayerNotification() {
         val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channelId = "prayer_notification_channel"
 
-        // إنشاء قناة الإشعار عند الحاجة فقط
+        // إنشاء قناة الإشعار إذا كانت غير موجودة
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (notificationManager.getNotificationChannel(channelId) == null) {
                 val channel = NotificationChannel(
@@ -75,8 +75,18 @@ class PrayerNotificationWorker(context: Context, workerParams: WorkerParameters)
             }
         }
 
-        // اختيار حديث عشوائي
-        val randomHadith = ahadith[Random.nextInt(ahadith.size)]
+        // الحصول على SharedPreferences لتخزين فهرس الحديث الذي تم عرضه آخر مرة
+        val sharedPreferences: SharedPreferences = applicationContext.getSharedPreferences("PrayerPrefs", Context.MODE_PRIVATE)
+        val currentIndex = sharedPreferences.getInt("last_shown_hadith_index", -1)
+
+        // تحديد فهرس الحديث التالي الذي سيتم عرضه
+        val nextIndex = (currentIndex + 1) % ahadith.size // التكرار على الأحاديث بشكل دائري
+
+        // اختيار الحديث التالي بناءً على الفهرس
+        val selectedHadith = ahadith[nextIndex]
+
+        // حفظ الفهرس الجديد في SharedPreferences
+        sharedPreferences.edit().putInt("last_shown_hadith_index", nextIndex).apply()
 
         // تعيين الصوت المخصص للإشعار
         val soundUri: Uri = Uri.parse("android.resource://${applicationContext.packageName}/raw/azan") // تأكد من صحة اسم الملف ووجوده
@@ -84,7 +94,7 @@ class PrayerNotificationWorker(context: Context, workerParams: WorkerParameters)
         // بناء الإشعار
         val notification = NotificationCompat.Builder(applicationContext, channelId)
             .setContentTitle("الصلاة على النبي")
-            .setContentText(randomHadith) // عرض الحديث العشوائي
+            .setContentText(selectedHadith) // عرض الحديث المحدد
             .setSmallIcon(R.drawable.logoazan) // تأكد من وجود هذا المورد
             .setAutoCancel(true)
             .setSound(soundUri)
@@ -96,10 +106,10 @@ class PrayerNotificationWorker(context: Context, workerParams: WorkerParameters)
     }
 
     companion object {
-        // دالة لجدولة إشعار الصلاة على النبي بشكل دوري كل 15 دقيقة
+        // دالة لجدولة إشعار الصلاة على النبي بشكل دوري كل 5 دقائق
         fun schedulePrayerNotification(context: Context) {
             val workRequest = PeriodicWorkRequestBuilder<PrayerNotificationWorker>(
-                15, TimeUnit.MINUTES // يتم تشغيل العمل كل 15 دقيقة
+                5, TimeUnit.MINUTES // تحديد العمل الدوري كل 5 دقائق
             ).build()
 
             // جدولة العمل الدوري

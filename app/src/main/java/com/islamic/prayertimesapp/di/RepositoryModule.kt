@@ -14,6 +14,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+// repository reback from api ,db
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {

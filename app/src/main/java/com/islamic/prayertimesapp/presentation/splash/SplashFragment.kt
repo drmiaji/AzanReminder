@@ -1,26 +1,27 @@
 package com.islamic.prayertimesapp.presentation.splash
 
+import android.Manifest
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
 import com.islamic.prayertimesapp.R
 import com.islamic.prayertimesapp.databinding.FragmentSplashBinding
-import com.islamic.prayertimesapp.presentation.splash.notifications.PrayerNotificationWorker
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 class SplashFragment : Fragment(R.layout.fragment_splash) {
 
     private var _binding: FragmentSplashBinding? = null
     private val binding get() = _binding!!
+
+    companion object {
+        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -32,8 +33,10 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
     override fun onResume() {
         super.onResume()
 
-        // إرسال إشعار الصلاة على النبي عند العودة للواجهة
-        sendPrayerNotification()
+        // طلب الإذن للإشعارات إذا لزم الأمر
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestNotificationPermission()
+        }
 
         // إعداد واجهة المستخدم
         setupUI()
@@ -64,15 +67,30 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         binding.lottieAnimation.playAnimation()
     }
 
-    // دالة لإرسال إشعار الصلاة على النبي باستخدام WorkManager
-    private fun sendPrayerNotification() {
-        // إعداد عمل واحد (OneTimeWorkRequest) لإرسال إشعار الصلاة على النبي
-        val workRequest = OneTimeWorkRequest.Builder(PrayerNotificationWorker::class.java)
-            .setInitialDelay(1, java.util.concurrent.TimeUnit.SECONDS) // تأخير بداية العمل لمدة ثانية واحدة
-            .build()
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permission = Manifest.permission.POST_NOTIFICATIONS
 
-        // تنفيذ العمل عبر WorkManager
-        WorkManager.getInstance(requireContext()).enqueue(workRequest)
+            if (requireContext().checkSelfPermission(permission) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(permission), NOTIFICATION_PERMISSION_REQUEST_CODE)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                // الإذن للإشعارات تم منحه
+
+            } else {
+                // الإذن للإشعارات تم رفضه
+            }
+        }
     }
 
     override fun onDestroyView() {

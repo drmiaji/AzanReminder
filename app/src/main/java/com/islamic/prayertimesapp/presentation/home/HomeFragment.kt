@@ -6,13 +6,17 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -63,20 +67,38 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
+        schedulePrayerNotifications()
         return binding.root
     }
-    override fun onResume() {
-        super.onResume()
-        // استدعاء لتشغيل الإشعار بشكل دوري عند استئناف الـ Fragment
-        context?.let { PrayerNotificationWorkerHome.schedulePrayerNotification(it) }
 
+    private fun schedulePrayerNotifications() {
+        // جدولة العمل باستخدام WorkManager
+        PrayerNotificationWorkerHome.schedulePrayerNotification(this.requireContext())
     }
+//    override fun onResume() {
+//        super.onResume()
+//        // استدعاء لتشغيل الإشعار بشكل دوري عند استئناف الـ Fragment
+//        context?.let { PrayerNotificationWorkerHome.schedulePrayerNotification(it) }
+//
+//    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        locationHelper = LocationHelper(requireActivity() as AppCompatActivity)
+
+        // التحقق من الاتصال بالشبكة
+        if (!isConnectedToInternet(requireContext())) {
+            showInternetRequiredDialog()
+        } else {
+            // إذا كان الإنترنت متصلًا، استمر في التطبيق
+            initAppLogic()
+        }
+
+
+
+
+    locationHelper = LocationHelper(requireActivity() as AppCompatActivity)
 
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
@@ -92,6 +114,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             findNavController().navigate(R.id.action_homeFragment_to_qiblaFragment)
         }
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initObservation() {
@@ -405,6 +428,48 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             binding.tvDate.text = "$currentMonth  $currentDay $currentYear"
         }
     }
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun isConnectedToInternet(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val networkCapabilities =
+            connectivityManager.getNetworkCapabilities(network) ?: return false
+        return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
 
+    fun showInternetRequiredDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Internet Required")
+            .setMessage("This app requires an active internet connection to work. Please enable your internet connection and restart the app.")
+            .setCancelable(false)
+            .setPositiveButton("Retry") { _, _ ->
+                if (!isConnectedToInternet(requireContext())) {
+                    Toast.makeText(requireContext(), "Please enable internet!", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    initAppLogic()
+                }
+            }
+            .setNegativeButton("Exit") { _, _ ->
+                requireActivity().finish()
+            }
+            .show()
+    }
+
+    fun initAppLogic() {
+        // المنطق الرئيسي للتطبيق هنا
+        binding.QiblaBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_qiblaFragment)
+        }
+        // بقية منطق التطبيق...
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        job?.cancel()
+
+    }
 
 }

@@ -3,27 +3,25 @@ package com.islamic.prayertimesapp.presentation.home.notifications
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.app.NotificationCompat
-import androidx.work.Worker
-import androidx.work.WorkerParameters
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.Worker
+import androidx.work.WorkerParameters
 import com.islamic.prayertimesapp.R
-import com.islamic.prayertimesapp.presentation.MainActivity
-import java.util.concurrent.TimeUnit
 import java.util.Calendar
-import java.text.SimpleDateFormat
+import java.util.SimpleTimeZone
 import java.util.TimeZone
+import java.text.SimpleDateFormat
+import java.util.concurrent.TimeUnit
 
 class PrayerNotificationWorkerHome(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
     override fun doWork(): Result {
-
         // عرض الإشعار بالعد التنازلي للصلاة القادمة
         showPrayerNotification()
         return Result.success()
@@ -40,7 +38,9 @@ class PrayerNotificationWorkerHome(context: Context, workerParams: WorkerParamet
                     channelId,
                     "Prayer Notifications",
                     NotificationManager.IMPORTANCE_HIGH
-                )
+                ).apply {
+                    description = "Channel for prayer notifications"
+                }
                 notificationManager.createNotificationChannel(channel)
             }
         }
@@ -53,20 +53,13 @@ class PrayerNotificationWorkerHome(context: Context, workerParams: WorkerParamet
             .setSmallIcon(R.drawable.logoazan)
             .setAutoCancel(true)
             // تحديد نغمة الصوت من ملف .ogg
-            .setSound(Uri.parse("android.resource://" + applicationContext.packageName + "/" + R.raw.azan)) // .ogg
-            .setVibrate(longArrayOf(0, 100, 500, 100)) // إضافة اهتزاز مع توقيت معين
+            .setSound(Uri.parse("android.resource://${applicationContext.packageName}/${R.raw.azan}"))
+            .setVibrate(longArrayOf(0, 500, 500, 500)) // اهتزاز بنمط معين
             .build()
 
-        // تفعيل الاهتزاز إذا كان الهاتف يدعمه
-        val vibrator = applicationContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE)) // اهتزاز لمدة ثانية
-        } else {
-            vibrator.vibrate(500) // اهتزاز لمدة ثانية (لإصدارات أقدم)
-        }
-
-        // عرض الإشعار
-        notificationManager.notify(1, notification)
+        // عرض الإشعار بمعرف ثابت لتجنب تراكم الإشعارات
+        val notificationId = 1 // معرف ثابت للإشعار
+        notificationManager.notify(notificationId, notification)
     }
 
     private fun getNextPrayer(): String {
@@ -97,7 +90,6 @@ class PrayerNotificationWorkerHome(context: Context, workerParams: WorkerParamet
         val timeRemaining = getTimeRemaining(currentTime, firstPrayer.value)
         val prayerTime = formatPrayerTime(firstPrayer.value)
 
-        // تغيير "غداً" إلى "التالي" إذا كان اليوم التالي
         return "صلاة ${firstPrayer.key} التالي: $prayerTime\nالوقت المتبقي: $timeRemaining"
     }
 
@@ -143,9 +135,16 @@ class PrayerNotificationWorkerHome(context: Context, workerParams: WorkerParamet
 
     companion object {
         fun schedulePrayerNotification(context: Context) {
-            // تحديد الجدولة لتكرار الإشعار بشكل دوري
-            val workRequest = PeriodicWorkRequestBuilder<PrayerNotificationWorkerHome>(15, TimeUnit.MINUTES).build()
-            WorkManager.getInstance(context).enqueue(workRequest)
+            val workRequest = PeriodicWorkRequestBuilder<PrayerNotificationWorkerHome>(
+                15, TimeUnit.MINUTES
+            ).build()
+
+            // جدولة العمل الدوري بمعرف فريد لتجنب التكرار
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                "PrayerNotificationWorkerHome",
+                androidx.work.ExistingPeriodicWorkPolicy.REPLACE,
+                workRequest
+            )
         }
     }
 }

@@ -16,7 +16,7 @@ class RepositoryImplemtation @Inject constructor(
     private val db: PrayerDatabase,
 ) : repository {
 
-
+// get prayer times
     override suspend fun getPrayerTimes(
         year: Int,
         month: Int,
@@ -26,18 +26,21 @@ class RepositoryImplemtation @Inject constructor(
     ): Response<PrayerTimeResponse> =
         apiInterface.getPrayerTimes(year, month, latitude, longitude, method)
 
+    // get qibla direction
     override suspend fun getQiblaDirection(
         latitude: Double,
         longitude: Double,
     ): Response<qiblaResponse> = apiInterface.getQiblaDirection(latitude, longitude)
 
+    // save data in cache prayersTimes
     override suspend fun savePrayersTimes(response: PrayerTimeResponse): Long =
         db.getPrayerDao().savePrayersTimes(response)
 
-
+// restart all cache prayersTime
     override fun getAllPrayersTimes(): LiveData<PrayerTimeResponse> =
         db.getPrayerDao().getAllPrayersTimes()
 
+    // حذف كل cache
     override suspend fun deleteAll() =
         db.getPrayerDao().deleteAll()
 
