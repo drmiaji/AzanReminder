@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.islamic.prayertimesapp"
-        minSdk = 24
+        minSdk = 21
         targetSdk = 35
         versionCode = 2
         versionName = "1.0"
@@ -54,17 +54,17 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     // retrofit
-    implementation("io.reactivex.rxjava3:rxjava:3.1.9")
-    implementation ("io.reactivex.rxjava3:rxandroid:3.0.2")
-    implementation ("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation ("com.squareup.retrofit2:adapter-rxjava3:2.11.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation(libs.rxjava)
+    implementation (libs.rxandroid)
+    implementation (libs.retrofit)
+    implementation (libs.adapter.rxjava3)
+    implementation (libs.converter.gson)
     // unit testing
-    testImplementation("org.mockito:mockito-core:3.11.2")
-    testImplementation ("junit:junit:4.13.2")
-    testImplementation ("org.mockito:mockito-inline:3.11.2")
-    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0")
-    testImplementation ("androidx.arch.core:core-testing:2.1.0")
+    testImplementation(libs.mockito.core)
+    testImplementation (libs.junit)
+    testImplementation (libs.mockito.inline)
+    testImplementation (libs.kotlinx.coroutines.test)
+    testImplementation (libs.androidx.core.testing)
     // Instrumented Unit Tests
     androidTestImplementation ("junit:junit:4.13.2")
     androidTestImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
@@ -78,32 +78,32 @@ dependencies {
     // LiveData test utilities
     testImplementation ("androidx.arch.core:core-testing:2.1.0")
     // lottie Animation
-    implementation ("com.airbnb.android:lottie:6.6.0")
+    implementation (libs.lottie)
     //Glide Image
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation (libs.glide)
 
-    implementation ("androidx.room:room-runtime:2.6.1")
-    kapt ("androidx.room:room-compiler:2.6.1")
-    implementation( "androidx.room:room-rxjava3:2.6.1") // Room RxJava integration
+    implementation (libs.androidx.room.runtime)
+    kapt (libs.androidx.room.compiler)
+    implementation( libs.androidx.room.rxjava3) // Room RxJava integration
 
-    implementation ("io.reactivex.rxjava3:rxjava:3.1.9")
-    implementation ( "io.reactivex.rxjava3:rxandroid:3.0.2")
+    implementation (libs.rxjava)
+    implementation ( libs.rxandroid)
 
-    implementation("androidx.room:room-runtime:2.6.1")
+    implementation(libs.androidx.room.runtime)
     // To use Kotlin annotation processing tool (kapt)
     kapt("androidx.room:room-compiler:2.6.1")
-    implementation ("androidx.cardview:cardview:1.0.0")
+    implementation (libs.androidx.cardview)
 
-    implementation("androidx.room:room-runtime:2.6.1")
-    annotationProcessor("androidx.room:room-compiler:2.6.1")
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
 
     // To use Kotlin annotation processing tool (kapt)
     kapt("androidx.room:room-compiler:2.6.1")
     //Kotlin Coroutines
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+    implementation (libs.kotlinx.coroutines.core)
+    implementation (libs.kotlinx.coroutines.android)
     // optional - Kotlin Extensions and Coroutines support for Room
-    implementation("androidx.room:room-ktx:2.6.1")
+    implementation(libs.androidx.room.ktx)
 
     // optional - RxJava2 support for Room
     implementation("androidx.room:room-rxjava2:2.6.1")
