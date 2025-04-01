@@ -17,7 +17,7 @@
             android:id="@+id/appwidget_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Next Prayer Is"
+            android:text="Next Prayer Is "
             android:textSize="23sp"
             android:textStyle="bold|italic"
             android:contentDescription="@string/appwidget_text" />
